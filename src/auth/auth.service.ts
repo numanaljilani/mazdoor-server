@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,6 +11,7 @@ import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from './password.strategy';
+import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class AuthService {
@@ -19,19 +22,22 @@ export class AuthService {
   ) {}
   async loginService(loginDto: LoginDto) {
     const { phone, password } = loginDto;
+    console.log(phone , password)
 
     try {
-      let user = await this.userRepository.findOne({ where: { phone } });
-      if (!user) return new NotFoundException();
+      let user = await this.userRepository.findOne({ where: { phone  } });
+      if (!user) return { error: { error: 'UserNotFound', message: 'User not found' }, user: null };;
 
       const comparePassword = await this.passportStrategy.comparePasswords(
         password,
         user.password,
       );
-      if (!comparePassword) return new UnauthorizedException();
 
-      const acess_token = await this.jwtService.signAsync({ phone });
-      return { ...user, acess_token };
+      if (!comparePassword) return  { error: { error: 'IncorrectPassword', message: 'Invalid password' }, user: null };
+ 
+      // const payload = { phone , id : user._id };
+      const access_token = await this.jwtService.signAsync({ phone , id : user._id});
+      return{user : { ...user, access_token }};
     } catch (error) {
       console.log(error);
     }

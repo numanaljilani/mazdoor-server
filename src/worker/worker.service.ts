@@ -9,16 +9,17 @@ export class WorkerService {
         @InjectRepository(User) private readonly userReposetry : Repository <User>
     ){}
 
-    async topRatedWorkerService(skip : number ,limit : number){
-        return this.userReposetry.find({take : 10})
+    async topRatedWorkerService(take : number ,skip : number){
+        return this.userReposetry.find({take , skip })
     }
 
-    async getWorkerByService(occupation : string ,skip : number ,limit : number ){
-        return this.userReposetry.find({where : {occupation : "plumber" } ,take : 10 , skip : 10})
+    async getWorkerByService(occupation : string ,take : number ,skip : number ){
+        console.log("inside service")
+        return this.userReposetry.find({where : {occupation } ,take , skip})
     }
 
-    async searchSerive(occupation : string ,skip : number ,limit : number){
-        return this.userReposetry.find({where : {occupation : "plumber" },take : 10 , skip : 10})
+    async searchSerive(name : string ,take : number ,skip : number){
+        return this.userReposetry.find({where : {name },take , skip})
     }
 
     async addedWorker(occupation : string ,skip : number ,limit : number , phone : number){

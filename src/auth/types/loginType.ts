@@ -19,6 +19,27 @@ export class UserType {
     address : string
 
     @Field()
-    acess_token : string
 
+    access_token : string
+    @Field()
+    profile : string
+
+}
+@ObjectType()
+export class PhoneAndPasswordError {
+
+    @Field()
+    error : string 
+
+    @Field()
+    message : string
+}
+
+@ObjectType()
+export class AuthResult {
+  @Field(() => UserType, { nullable: true })
+  user: UserType;
+
+  @Field(() => PhoneAndPasswordError, { nullable: true })
+  error: PhoneAndPasswordError;
 }

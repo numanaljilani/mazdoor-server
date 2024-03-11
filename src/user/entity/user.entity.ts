@@ -1,4 +1,5 @@
-import { Column, Entity, ObjectIdColumn, PrimaryColumn } from 'typeorm';
+import { Image } from 'src/worker/entity/images.entity';
+import { Column, Entity, ObjectIdColumn, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -29,13 +30,35 @@ export class User {
   @Column()
   isAdminVerfied : boolean;
 
-  @Column({ nullable : true})
+  @Column()
   profile : string;
-
 
   @Column()
   occupation : string;
 
+  @Column()
+  cost : number;
 
+  @Column()
+  unit : string;
+
+  @Column()
+  tags : string[];
+
+  @Column()
+  location : string;
+
+  @Column()
+  availablity : string;
+
+  @Column({ default : 0 })
+  votes : number;
+
+  @Column()
+  adminVerified : boolean;
+
+
+  @OneToMany(() => Image, image => image.user)
+  images: Image[];
 
 }

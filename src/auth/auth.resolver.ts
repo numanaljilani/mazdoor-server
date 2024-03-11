@@ -1,5 +1,5 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
-import { UserType } from './types/loginType';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthResult, PhoneAndPasswordError, UserType } from './types/loginType';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
@@ -10,9 +10,10 @@ export class AuthResolver {
         private readonly authService : AuthService
     ){}
 
-    @Query((returns => UserType))
-    login(@Args('logindto') loginDto : LoginDto){
-        console.log(loginDto)
+    
+    @Mutation((returns => AuthResult ))
+    login(@Args('logindto') loginDto : LoginDto ){
+        console.log("Inside login")
         return this.authService.loginService(loginDto)
     }
 }

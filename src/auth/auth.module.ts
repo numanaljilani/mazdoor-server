@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestMiddleware, NestModule } from '@nestjs/common';
 import { AuthResolver } from './auth.resolver';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { User } from 'src/user/entity/user.entity';
 import { AuthService } from './auth.service';
 import { PasswordService } from './password.strategy';
+import { AuthMiddleware } from './auth.middleware';
 
 
 @Module({
@@ -17,7 +18,9 @@ import { PasswordService } from './password.strategy';
       signOptions: { expiresIn: '1y' },
     }),
   ],
-  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService],
-  exports: [JwtStrategy]
+  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService ,AuthMiddleware],
+  exports: [JwtStrategy,PasswordService ,AuthMiddleware]
 })
-export class AuthModule {}
+export class AuthModule {
+
+}
