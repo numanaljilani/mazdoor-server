@@ -31,6 +31,15 @@ export class WorkerResolver {
 
   @Query((returns) => [WorkerType])
   addedWorker() {
-    return this.workerService.addedWorker('electrician', 10, 2, 98999);
+    return this.workerService.addedWorker(10, 2,3209482309);
+  }
+
+  @Query((returns) => [WorkerType])
+  pendingVerify(
+    @Args('take') take: number,
+    @Args('skip') skip: number,
+  ) {
+    
+    return this.workerService.pendingVerify( skip , take);
   }
 }

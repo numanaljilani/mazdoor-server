@@ -16,4 +16,8 @@ export class AuthResolver {
         console.log("Inside login")
         return this.authService.loginService(loginDto)
     }
+    @Mutation((returns => AuthResult ))
+    adminLogin(@Args('logindto') loginDto : LoginDto ){
+        return this.authService.adminloginService(loginDto)
+    }
 }

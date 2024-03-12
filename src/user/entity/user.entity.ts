@@ -49,6 +49,9 @@ export class User {
   location : string;
 
   @Column()
+  admin : boolean;
+
+  @Column()
   availablity : string;
 
   @Column({ default : 0 })

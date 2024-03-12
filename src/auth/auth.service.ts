@@ -20,6 +20,8 @@ export class AuthService {
     private jwtService: JwtService,
     private passportStrategy: PasswordService,
   ) {}
+
+  
   async loginService(loginDto: LoginDto) {
     const { phone, password } = loginDto;
     console.log(phone , password)
@@ -36,7 +38,32 @@ export class AuthService {
       if (!comparePassword) return  { error: { error: 'IncorrectPassword', message: 'Invalid password' }, user: null };
  
       // const payload = { phone , id : user._id };
-      const access_token = await this.jwtService.signAsync({ phone , id : user._id});
+      const access_token = await this.jwtService.signAsync({ phone , id : user._id });
+      return{user : { ...user, access_token }};
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+  async adminloginService(loginDto: LoginDto) {
+    const { phone, password } = loginDto;
+
+    try {
+      let user = await this.userRepository.findOne({ where: { phone  } });
+      if (!user) return { error: { error: 'UserNotFound', message: 'User not found' }, user: null };;
+
+      if(!user.admin){
+        return { error: { error: 'UnAuthorized', message: 'You are not authorized' }, user: null };;
+      }
+      const comparePassword = await this.passportStrategy.comparePasswords(
+        password,
+        user.password,
+      );
+
+      if (!comparePassword) return  { error: { error: 'IncorrectPassword', message: 'Invalid password' }, user: null };
+ 
+      // const payload = { phone , id : user._id };
+      const access_token = await this.jwtService.signAsync({ phone , id : user._id , admin : true });
       return{user : { ...user, access_token }};
     } catch (error) {
       console.log(error);

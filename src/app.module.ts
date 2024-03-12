@@ -23,7 +23,7 @@ import { Image } from './worker/entity/images.entity';
     ),
     TypeOrmModule.forRoot({
       type: 'mongodb',
-      url: 'mongodb://localhost:27017/mazdoor',
+      url: process.env.MONGO_URI,
       synchronize: true,
       useUnifiedTopology: true,
       entities: [User,Otp,Image],

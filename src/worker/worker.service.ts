@@ -22,7 +22,17 @@ export class WorkerService {
         return this.userReposetry.find({where : {name },take , skip})
     }
 
-    async addedWorker(occupation : string ,skip : number ,limit : number , phone : number){
+    async addedWorker(skip : number ,limit : number , phone : number){
         return this.userReposetry.find({where : {occupation : "plumber" , phone },take : 10 , skip : 10})
+    }
+
+
+    //  super admin 
+    async pendingVerify(skip : number ,limit : number){
+        return this.userReposetry.find({where : {adminVerified : false },take : limit , skip})
+    }
+
+    async getAllworker(skip : number ,limit : number , phone : number){
+        return this.userReposetry.find({take : limit  , skip})
     }
 }
