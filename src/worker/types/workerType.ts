@@ -16,8 +16,7 @@ export class WorkerType {
     @Field()
     address : string
 
-    @Field(() => [String]) // Define occupation field as an array of strings
-    occupation: string[];
-
+    @Field() // Define occupation field as an array of strings
+    occupation: string;
 
 }

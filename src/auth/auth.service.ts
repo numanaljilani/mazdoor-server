@@ -21,53 +21,96 @@ export class AuthService {
     private passportStrategy: PasswordService,
   ) {}
 
-  
   async loginService(loginDto: LoginDto) {
     const { phone, password } = loginDto;
-    console.log(phone , password)
+    console.log(phone, password);
 
     try {
-      let user = await this.userRepository.findOne({ where: { phone  } });
-      if (!user) return { error: { error: 'UserNotFound', message: 'User not found' }, user: null };;
+      let user = await this.userRepository.findOne({ where: { phone } });
+      if (!user)
+        return {
+          error: { error: 'UserNotFound', message: 'User not found' },
+          user: null,
+        };
 
       const comparePassword = await this.passportStrategy.comparePasswords(
         password,
         user.password,
       );
 
-      if (!comparePassword) return  { error: { error: 'IncorrectPassword', message: 'Invalid password' }, user: null };
- 
+      if (!comparePassword)
+        return {
+          error: { error: 'IncorrectPassword', message: 'Invalid password' },
+          user: null,
+        };
+
       // const payload = { phone , id : user._id };
-      const access_token = await this.jwtService.signAsync({ phone , id : user._id });
-      return{user : { ...user, access_token }};
+      const access_token = await this.jwtService.signAsync({
+        phone,
+        id: user._id,
+      });
+      return { user: { ...user, access_token } };
     } catch (error) {
       console.log(error);
     }
+  }
 
+  async me(me) {
+    try {
+      console.log(me)
+      const verify = await this.jwtService.verifyAsync(me.token);
+      console.log(verify, '>>>>>>>');
+      console.log(me);
+      if (!verify) {
+        return {
+          user: null,
+          error: { error: 'Token not verify', message: 'Unable to verify' },
+        };
+      }
+      const user = await this.userRepository.findOne(verify.id);
+
+      return { user, error: null };
+    } catch (error) {
+      console.log(error);
+    }
   }
   async adminloginService(loginDto: LoginDto) {
     const { phone, password } = loginDto;
 
     try {
-      let user = await this.userRepository.findOne({ where: { phone  } });
-      if (!user) return { error: { error: 'UserNotFound', message: 'User not found' }, user: null };;
+      let user = await this.userRepository.findOne({ where: { phone } });
+      if (!user)
+        return {
+          error: { error: 'UserNotFound', message: 'User not found' },
+          user: null,
+        };
 
-      if(!user.admin){
-        return { error: { error: 'UnAuthorized', message: 'You are not authorized' }, user: null };;
+      if (!user.admin) {
+        return {
+          error: { error: 'UnAuthorized', message: 'You are not authorized' },
+          user: null,
+        };
       }
       const comparePassword = await this.passportStrategy.comparePasswords(
         password,
         user.password,
       );
 
-      if (!comparePassword) return  { error: { error: 'IncorrectPassword', message: 'Invalid password' }, user: null };
- 
+      if (!comparePassword)
+        return {
+          error: { error: 'IncorrectPassword', message: 'Invalid password' },
+          user: null,
+        };
+
       // const payload = { phone , id : user._id };
-      const access_token = await this.jwtService.signAsync({ phone , id : user._id , admin : true });
-      return{user : { ...user, access_token }};
+      const access_token = await this.jwtService.signAsync({
+        phone,
+        id: user._id,
+        admin: true,
+      });
+      return { user: { ...user, access_token } };
     } catch (error) {
       console.log(error);
     }
-
   }
 }
