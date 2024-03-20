@@ -1,16 +1,14 @@
-// Image.entity.ts
-import { User } from 'src/user/entity/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-
+import { ObjectId } from 'mongodb';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class Image {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ObjectIdColumn()
+  _id: ObjectId;
+
+  @Column()
+  userId: string;
 
   @Column()
   imageUrl: string;
-
-  @ManyToOne(() => User, user => user.images)
-  user: User;
 }

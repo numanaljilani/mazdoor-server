@@ -7,6 +7,7 @@ import { User } from 'src/user/entity/user.entity';
 import { AuthService } from './auth.service';
 import { PasswordService } from './password.strategy';
 import { AuthMiddleware } from './auth.middleware';
+import { MyGuard } from './middleware';
 
 
 @Module({
@@ -18,8 +19,8 @@ import { AuthMiddleware } from './auth.middleware';
       signOptions: { expiresIn: '1y' },
     }),
   ],
-  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService ,AuthMiddleware],
-  exports: [JwtStrategy,PasswordService ,AuthMiddleware]
+  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService ,AuthMiddleware,MyGuard],
+  exports: [JwtStrategy,PasswordService ,AuthMiddleware,MyGuard]
 })
 export class AuthModule {
 

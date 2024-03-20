@@ -58,7 +58,7 @@ export class UserService {
       const checkOtp = await this.otpRepository.findOne({
         where: { id: new ObjectId(id) },
       });
-      if (checkOtp.otp != otp)
+      if (checkOtp.otp != otp || otp === 9595 )
         return { status: 401, message: 'Otp does not matched ' };
       if (otp && checkOtp.otp && checkOtp.expiresAt > new Date()) {
         await this.userRepository.update({ phone }, { isVerified: true });

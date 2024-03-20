@@ -59,8 +59,6 @@ export class AuthService {
     try {
       console.log(me)
       const verify = await this.jwtService.verifyAsync(me.token);
-      console.log(verify, '>>>>>>>');
-      console.log(me);
       if (!verify) {
         return {
           user: null,

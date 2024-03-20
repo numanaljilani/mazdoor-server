@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {  MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,10 +9,11 @@ import { WorkerResolver } from './worker/worker.resolver';
 import { WorkerModule } from './worker/worker.module';
 import { WorkerService } from './worker/worker.service';
 import { Otp } from './user/entity/otp.entity';
-import { AuthMiddleware } from './auth/auth.middleware';
-import { UserController } from './user/user.controller';
 import { ConfigModule } from '@nestjs/config';
 import { Image } from './worker/entity/images.entity';
+import { WatchList } from './worker/entity/watchList.entity';
+import { MyGuard } from './auth/middleware';
+import * as cors from 'cors';
 
 @Module({
   imports: [UserModule, AuthModule,WorkerModule,
@@ -26,21 +27,25 @@ import { Image } from './worker/entity/images.entity';
       url: process.env.MONGO_URI,
       synchronize: true,
       useUnifiedTopology: true,
-      entities: [User,Otp,Image],
+      entities: [User,Otp,Image,WatchList],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: true,
       driver: ApolloDriver,
     }),
-    TypeOrmModule.forFeature([User,Otp,Image])
-    
+    TypeOrmModule.forFeature([User,Otp,Image,WatchList]),
+   
   ],
   controllers: [],
-  providers: [WorkerResolver,WorkerService],
+  providers: [WorkerResolver,WorkerService,MyGuard],
 })
-export class AppModule 
+export class AppModule implements NestModule
 // implements NestModule 
 {
+  configure(consumer: MiddlewareConsumer) {
+    // Apply CORS middleware to all routes
+    consumer.apply(cors()).forRoutes('*');
+  }
   // configure(consumer: MiddlewareConsumer) {
   //   consumer
   //     .apply(AuthMiddleware)

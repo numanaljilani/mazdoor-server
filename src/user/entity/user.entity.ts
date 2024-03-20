@@ -1,14 +1,15 @@
-import { Image } from 'src/worker/entity/images.entity';
-import { Column, Entity, ObjectIdColumn, OneToMany, PrimaryColumn } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { Column, Entity, ObjectIdColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class User {
   @ObjectIdColumn()
-  _id: string;
+  _id: ObjectId;
 
   @PrimaryColumn()
   id: string;
 
+  // @Index({ fulltext: true })
   @Column()
   name: string;
 
@@ -60,8 +61,7 @@ export class User {
   @Column()
   adminVerified : boolean;
 
-
-  @OneToMany(() => Image, image => image.user)
-  images: Image[];
+  @Column()
+  available : boolean;
 
 }
