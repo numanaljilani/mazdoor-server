@@ -32,25 +32,28 @@ export class UserType {
     @Field()
     isAdminVerfied : boolean
 
-    @Field()
-    occupation : boolean
+    @Field( { nullable: true })
+    isWorker : boolean
 
-    @Field()
+    @Field( { nullable: true })
+    occupation : string
+
+    @Field( { nullable: true })
     cost : number;
   
-    @Field()
+    @Field( { nullable: true })
     unit : string;
   
-    @Field(() => [String])
+    @Field(() => [String], { nullable: true })
     tags : string[];
   
-    @Field()
+    @Field( { nullable: true })
     location : string;
   
     @Field()
     admin : boolean;
   
-    @Field()
+    @Field( { nullable: true })
     availablity : string;
   
     @Field()

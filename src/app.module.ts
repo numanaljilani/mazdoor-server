@@ -14,6 +14,7 @@ import { Image } from './worker/entity/images.entity';
 import { WatchList } from './worker/entity/watchList.entity';
 import { MyGuard } from './auth/middleware';
 import * as cors from 'cors';
+import { AwsConfigService } from './auth/aws.config.service';
 
 @Module({
   imports: [UserModule, AuthModule,WorkerModule,
@@ -37,19 +38,12 @@ import * as cors from 'cors';
    
   ],
   controllers: [],
-  providers: [WorkerResolver,WorkerService,MyGuard],
+  providers: [WorkerResolver,WorkerService,MyGuard,AwsConfigService],
 })
 export class AppModule implements NestModule
-// implements NestModule 
 {
   configure(consumer: MiddlewareConsumer) {
-    // Apply CORS middleware to all routes
     consumer.apply(cors()).forRoutes('*');
   }
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //     .apply(AuthMiddleware)
-  //     .exclude({ path: 'user/phone', method: RequestMethod.ALL })
-  //     .forRoutes(UserController);
-  // }
+
 }

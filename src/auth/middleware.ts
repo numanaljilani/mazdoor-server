@@ -12,7 +12,7 @@ export class MyGuard implements CanActivate {
     // Your guard logic here
     const authorizationHeader = req.headers.authorization;
 
-    console.log(authorizationHeader)
+
     if (!authorizationHeader) {
         // No Authorization header found, proceed to the next middleware
         throw new UnauthorizedException()

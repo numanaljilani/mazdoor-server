@@ -28,6 +28,9 @@ export class User {
   @Column()
   isVerified : boolean;
 
+  @Column({default : false})
+  isWorker : boolean;
+
   @Column()
   isAdminVerfied : boolean;
 

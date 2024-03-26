@@ -4,6 +4,8 @@ import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { WatchList } from './entity/watchList.entity';
 import { Image } from './entity/images.entity';
+import { AwsConfigService } from 'src/auth/aws.config.service';
+import { extname } from 'path';
 
 @Injectable()
 export class WorkerService {
@@ -13,23 +15,28 @@ export class WorkerService {
     private readonly watchListRepository: Repository<WatchList>,
     @InjectRepository(Image)
     private readonly imageRepository: Repository<Image>,
+    private readonly awsConfigService: AwsConfigService,
   ) {}
 
   async topRatedWorkerService(take: number, skip: number) {
-    console.log(skip , take)
-    return this.userReposetry.find({where : {adminVerified : true } , take, skip });
+
+    return this.userReposetry.find({
+      where: { adminVerified: true },
+      take,
+      skip,
+    });
   }
 
   async getWorkerByService(occupation: string, take: number, skip: number) {
-    console.log('inside service');
+
 
     try {
       const worker = await this.userReposetry.find({
-        where: { occupation },
+        where: { occupation ,isWorker : true , adminVerified: true },
         take,
         skip,
       });
-      console.log(worker);
+
       return worker;
     } catch (error) {
       console.log(error);
@@ -38,7 +45,7 @@ export class WorkerService {
   }
 
   async searchSerive(queryString: string, take: number, skip: number) {
-    console.log(queryString);
+ 
     const users = await this.userReposetry.find();
 
     const filteredUsers = users.filter((user) =>
@@ -60,10 +67,20 @@ export class WorkerService {
   //  super admin
   async pendingVerify(skip: number, limit: number) {
     return this.userReposetry.find({
-      where: { adminVerified: false },
+      where: { adminVerified: false , isWorker : true },
       take: limit,
       skip,
     });
+  }
+
+  async verifyWorker(id) {
+    const verifyWorkerById = await this.userReposetry.update(id , { isAdminVerfied : true })
+    return this.userReposetry.findOne(id);
+  }
+
+  async blockWorker(id) {
+    const verifyWorkerById = await this.userReposetry.update(id , { isAdminVerfied : false })
+    return this.userReposetry.findOne(id);
   }
 
   async getAllworker(skip: number, limit: number, phone: number) {
@@ -73,7 +90,7 @@ export class WorkerService {
   async getWorkerById(id) {
     try {
       const worker = await this.userReposetry.findOne(id);
-      console.log(worker);
+ 
       return worker;
     } catch (error) {
       console.log(error);
@@ -89,7 +106,7 @@ export class WorkerService {
         },
       });
 
-      const user =await this.userReposetry.findOne(workerId);
+      const user = await this.userReposetry.findOne(workerId);
 
       if (exist) {
         await this.watchListRepository.delete({ userId, workerIds: workerId });
@@ -98,10 +115,9 @@ export class WorkerService {
         const addInWatchList = await this.watchListRepository.create({
           userId,
           workerIds: workerId,
-          name : user.name,
-          location : user.location,
-          imageUrl : user.profile
-          
+          name: user.name,
+          location: user.location,
+          imageUrl: user.profile,
         });
         await this.watchListRepository.save(addInWatchList);
         return { added: true, message: 'Added in your watch list' };
@@ -119,21 +135,38 @@ export class WorkerService {
     return await this.userReposetry.findOne(id);
   }
 
-  async uploadPost(imageName, id) {
-    console.log(imageName, id);
-    const uploadPost = await this.imageRepository.create({
-      imageUrl: imageName,
-      userId: id,
-    });
+  async uploadPost(file, id) {
+    try {
+      if (!file) return;
 
-    return await this.imageRepository.save(uploadPost);
+      const fileExtension = extname(file?.originalname);
+      const timestamp = new Date().getTime(); // Get current timestamp
+      const randomNumber = Math.floor(Math.random() * 10000); // Generate random number
+      const uniqueFileName = `${timestamp}-${randomNumber}${fileExtension}`;
+
+      const data = await this.awsConfigService.upload(
+        uniqueFileName,
+        file.buffer,
+        fileExtension,
+      );
+
+      const addImage = await this.imageRepository.create({
+        imageUrl: uniqueFileName,
+        userId: id,
+      });
+      this.imageRepository.save(addImage);
+      return addImage; // Return the URL of the uploaded image
+    } catch (error) {
+      console.error('Error uploading image to S3:', error);
+      throw error;
+    }
   }
 
   async getPosts(userId) {
     return this.imageRepository.find({ where: { userId } });
   }
 
-  async myWatchList(take , skip , userId) {
+  async myWatchList(take, skip, userId) {
     return this.watchListRepository.find({ where: { userId } });
   }
 }

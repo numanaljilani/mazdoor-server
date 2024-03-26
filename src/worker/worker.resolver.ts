@@ -22,6 +22,7 @@ export class WorkerResolver {
     @Args('take') take: number,
     @Args('skip') skip: number,
   ) {
+
     return this.workerService.getWorkerByService(occupation, take, skip);
   }
 
@@ -42,6 +43,16 @@ export class WorkerResolver {
   @Query((returns) => [WorkerType])
   pendingVerify(@Args('take') take: number, @Args('skip') skip: number) {
     return this.workerService.pendingVerify(skip, take);
+  }
+
+  @Query((returns) => WorkerType)
+  verifyWorker(@Args('id') id: string ) {
+    return this.workerService.verifyWorker(id);
+  }
+
+  @Query((returns) => WorkerType)
+  blockWorker(@Args('id') id: string ) {
+    return this.workerService.blockWorker(id);
   }
 
   @Query((returns) => WorkerType)
@@ -79,7 +90,6 @@ export class WorkerResolver {
     @Args('take') take: number,
     @Args('skip') skip: number,
     @Context() context: any) {
-    console.log("inside " , take , skip)
     return this.workerService.myWatchList(take , skip , context.req.user.id);
   }
 }

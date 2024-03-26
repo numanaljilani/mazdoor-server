@@ -10,6 +10,9 @@ export class WorkerType {
 
     @Field()
     phone : string
+
+    @Field()
+    profile : string
    
 
     @Field()
@@ -21,10 +24,10 @@ export class WorkerType {
     @Field() // Define occupation field as an array of strings
     occupation: string;
 
-    @Field()
+    @Field({nullable : true})
     cost : number;
   
-    @Field()
+    @Field({nullable : true})
     unit : string;
   
     // @Field()

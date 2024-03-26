@@ -8,7 +8,6 @@ export class AuthMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     const authorizationHeader = req.headers.authorization;
-    console.log(authorizationHeader , "iside middleware")
 
     if (!authorizationHeader) {
       // No Authorization header found, proceed to the next middleware
@@ -31,7 +30,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       // Proceed to the next middleware
       const user =  this.jwtService.decode(token)
-      // console.log(user)
+   
       req.user = user
 
       next();

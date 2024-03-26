@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storage } from 'src/user/user.controller';
 import { WorkerService } from './worker.service';
 
 @Controller('worker')
@@ -16,14 +15,11 @@ export class WorkerController {
   constructor(private readonly workerService: WorkerService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('file', storage))
+  @UseInterceptors(FileInterceptor('file'))
   @Post('post')
-  async uploadFile(@UploadedFile() file, @Req() req) {
-    console.log(file.filename);
-    console.log('inside upload profile');
+  async uploadFile(@UploadedFile() file : Express.Multer.File, @Req() req) {
     const { id } = req.user
-    const fileName = file.filename;
-    return this.workerService.uploadPost(fileName , id);
-    // return this.userService.uploadProfile(req, {profile: file.filename} );
+    return this.workerService.uploadPost(file , id);
+
   }
 }

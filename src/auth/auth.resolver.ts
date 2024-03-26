@@ -12,7 +12,7 @@ export class AuthResolver {
 
   @Mutation((returns) => AuthResult)
   login(@Args('logindto') loginDto: LoginDto) {
-    console.log('Inside login');
+
     return this.authService.loginService(loginDto);
   }
   // @UseGuards(AuthGuard('jwt'))

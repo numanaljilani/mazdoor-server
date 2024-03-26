@@ -23,7 +23,7 @@ export class AuthService {
 
   async loginService(loginDto: LoginDto) {
     const { phone, password } = loginDto;
-    console.log(phone, password);
+
 
     try {
       let user = await this.userRepository.findOne({ where: { phone } });
@@ -49,7 +49,13 @@ export class AuthService {
         phone,
         id: user._id,
       });
-      return { user: { ...user, access_token } };
+      return { user: { ...user, access_token ,...(!user.isWorker && {
+        occupation: null,
+        cost: null,
+        unit: null,
+        location: null,
+        isWorker  : false
+      }),  } };
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +63,6 @@ export class AuthService {
 
   async me(me) {
     try {
-      console.log(me)
       const verify = await this.jwtService.verifyAsync(me.token);
       if (!verify) {
         return {
@@ -67,7 +72,18 @@ export class AuthService {
       }
       const user = await this.userRepository.findOne(verify.id);
 
-      return { user, error: null };
+      return {
+        user: {
+          ...user,
+          ...(!user.isWorker && {
+            occupation: "null",
+            cost: "null",
+            unit: "null",
+            location: "null",
+          }),
+        },
+        error: null,
+      };
     } catch (error) {
       console.log(error);
     }

@@ -10,7 +10,6 @@ async function bootstrap() {
   //   prefix: '/uploads', // Define the URL prefix for accessing static files
   // });
   dotenv.config();
-  console.log(process.env.MONGO_URI , ">>>>>>>>")
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
   await app.listen(3000);
 

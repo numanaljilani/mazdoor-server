@@ -13,6 +13,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { PasswordService } from 'src/auth/password.strategy';
 import { Otp } from './entity/otp.entity';
 import { ObjectId } from 'mongodb';
+import { extname } from 'path';
+import { AwsConfigService } from 'src/auth/aws.config.service';
 
 @Injectable()
 export class UserService {
@@ -21,6 +23,8 @@ export class UserService {
     @InjectRepository(Otp) private otpRepository: Repository<Otp>,
     private passwordService: PasswordService,
     private jwtService: JwtService,
+    
+    private readonly awsConfigService: AwsConfigService,
   ) {}
 
   async registerPhoneNumberAndSendOtpService(body: RegisterPhoneNumberDto) {
@@ -103,30 +107,46 @@ export class UserService {
   }
 
   async uploadProfile(req, file) {
-    console.log(req.user);
+
     const { id } = req.user;
     if (!file) throw new Error('No file found');
+
+    if (!file) return;
+
+    const fileExtension = extname(file?.originalname);
+    const timestamp = new Date().getTime(); // Get current timestamp
+    const randomNumber = Math.floor(Math.random() * 10000); // Generate random number
+    const uniqueFileName = `${timestamp}-${randomNumber}${fileExtension}`;
+
     try {
-      await this.userRepository.update(id, { profile: file.profile });
-      // return await this.userRepository.findOne({
-      //   where: { _ },
-      // });
+      const data = await this.awsConfigService.upload(
+        uniqueFileName,
+        file.buffer,
+      );
+      if (data.$metadata.httpStatusCode != 200) {
+        return { error: true, message: 'upload failed' };
+      }
+
+      await this.userRepository.update(id, { profile: uniqueFileName });
+
       return await this.userRepository.findOne(id);
     } catch (error) {
       console.log(error, 'create user');
     }
   }
+
+
   async createWorker(req, file) {
-    console.log(req.user);
+  
     const { id } = req.user;
     const { service, cost, unit, tags, location, available } = req.body;
     try {
-      console.log(req.body);
-      console.log(req.file.filename);
+
+
       const user = await this.userRepository.findOne(id);
       if (!user)
         return { error: { error: 'UserNotFound', message: 'User not found' } };
-      console.log(tags.trim().replace(/\s+/g, '').split('#'))
+  
 
       await this.userRepository.update(id , {
         cost : parseFloat(cost),
@@ -135,7 +155,8 @@ export class UserService {
         tags :tags ? tags.trim().replace(/\s/g, '').split('#') :[service],
         location,
         availablity : available,
-        adminVerified : false
+        adminVerified : false,
+        isWorker : true
       });
 
       const {password , ...data} = await this.userRepository.findOne(id);
@@ -144,17 +165,6 @@ export class UserService {
       console.log(error, 'inside worker upload');
     }
 
-    // if(!file) throw new Error("No file found")
-    // try {
-    //   await this.userRepository.update(id, { profile : file.profile });
-    //   // return await this.userRepository.findOne({
-    //   //   where: { _ },
-    //   // });
-    //   return await this.userRepository.findOne(id)
-
-    // } catch (error) {
-    //   console.log(error, 'create user');
-    // }
   }
 
   async updateUser(body: CreateUserDto, user: any) {

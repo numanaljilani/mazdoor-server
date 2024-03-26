@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { PasswordService } from './password.strategy';
 import { AuthMiddleware } from './auth.middleware';
 import { MyGuard } from './middleware';
+import { AwsConfigService } from './aws.config.service';
 
 
 @Module({
@@ -19,8 +20,8 @@ import { MyGuard } from './middleware';
       signOptions: { expiresIn: '1y' },
     }),
   ],
-  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService ,AuthMiddleware,MyGuard],
-  exports: [JwtStrategy,PasswordService ,AuthMiddleware,MyGuard]
+  providers: [AuthResolver,JwtStrategy, AuthService,PasswordService ,AuthMiddleware,MyGuard,AwsConfigService],
+  exports: [JwtStrategy,PasswordService ,AuthMiddleware,MyGuard,AwsConfigService]
 })
 export class AuthModule {
 

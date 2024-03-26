@@ -36,7 +36,7 @@ export class UserController {
 
     @Post("phone")
     registerPhoneNumberAndSendOtp(@Body() body : RegisterPhoneNumberDto ){
-        console.log(body , ">>>>>>>>")
+
         return this.userService.registerPhoneNumberAndSendOtpService(body)
     }
 
@@ -45,7 +45,7 @@ export class UserController {
     verifyOtp(@Body() body : verifyOtpDto,
     @Request() req : any
     ){
-        console.log("inside controller verify user")
+    
         return this.userService.verifyOtpService(body ,req)
     }
 
@@ -62,13 +62,13 @@ export class UserController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @UseInterceptors(FileInterceptor('file',storage))
+    @UseInterceptors(FileInterceptor('file'))
     @Post('profile')
-    async uploadFile(@UploadedFile() file,
+    async uploadFile(@UploadedFile() file : Express.Multer.File,
     @Req() req 
+
     ) {
-        console.log("inside upload profile")
-      return this.userService.uploadProfile(req, {profile: file.filename} );
+      return this.userService.uploadProfile(req, file);
     }
 
 
@@ -84,7 +84,7 @@ export class UserController {
 
 
     @UseGuards(AuthGuard('jwt'))
-    @UseInterceptors(FileInterceptor('file',storage))
+    @UseInterceptors(FileInterceptor('file'))
     @Post('create-worker')
     async createWorker(@UploadedFile() file,
     @Req() req ,
