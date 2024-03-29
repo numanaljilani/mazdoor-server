@@ -23,7 +23,7 @@ export class UserType {
     @Field()
     access_token : string
 
-    @Field()
+    @Field({ nullable : true ,defaultValue : 'user.png'})
     profile : string
  
     @Field()
@@ -38,7 +38,7 @@ export class UserType {
     @Field( { nullable: true })
     occupation : string
 
-    @Field( { nullable: true })
+    @Field( { nullable: true , defaultValue : 0})
     cost : number;
   
     @Field( { nullable: true })
@@ -50,7 +50,7 @@ export class UserType {
     @Field( { nullable: true })
     location : string;
   
-    @Field()
+    @Field({defaultValue : false })
     admin : boolean;
   
     @Field( { nullable: true })

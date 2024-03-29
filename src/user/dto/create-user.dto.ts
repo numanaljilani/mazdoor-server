@@ -6,7 +6,7 @@ import { IsEmail, MinLength } from "class-validator";
 export class CreateUserDto{
 
     @MinLength(1)
-    @Field({nullable : true})
+    @Field()
     name : string 
    
     @MinLength(6)

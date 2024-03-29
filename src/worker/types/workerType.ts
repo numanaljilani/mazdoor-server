@@ -11,7 +11,7 @@ export class WorkerType {
     @Field()
     phone : string
 
-    @Field()
+    @Field({ nullable : true ,defaultValue : 'user.png'})
     profile : string
    
 
