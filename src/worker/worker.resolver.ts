@@ -1,15 +1,16 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { WorkerService } from './worker.service';
 import { WorkerType } from './types/workerType';
-import { Req, UseGuards } from '@nestjs/common';
+import {  UseGuards } from '@nestjs/common';
 import { MyGuard } from 'src/auth/middleware';
 import { WatchListType } from './types/watchListType';
-import { ImageType } from './types/imageType';
+import { DeleteImageType, ImageType } from './types/imageType';
 import { myWatchListType } from './types/myWatchList';
 
 @Resolver((of) => WorkerType)
 export class WorkerResolver {
-  constructor(private readonly workerService: WorkerService) {}
+  constructor(private readonly workerService: WorkerService) {
+  }
 
   @Mutation((returns) => [WorkerType])
   topRatedWorkers(@Args('take') take: number, @Args('skip') skip: number) {
@@ -55,12 +56,14 @@ export class WorkerResolver {
     return this.workerService.blockWorker(id);
   }
 
+  @UseGuards(MyGuard)
   @Query((returns) => WorkerType)
-  getWorkerById(@Args('id') id: string) {
-    return this.workerService.getWorkerById(id);
+  getWorkerById(@Args('id') id: string, @Context() context: any  ) {
+    const { id: userId } = context.req.user;
+    console.log(userId , ">>>>>")
+    return this.workerService.getWorkerById(id , userId );
   }
 
-  // @UseGuards(AuthGuard('jwt'))
   @UseGuards(MyGuard)
   @Mutation((returns) => WatchListType)
   addWorkerToWatchList(@Args('id') id: string, @Context() context: any) {
@@ -77,11 +80,16 @@ export class WorkerResolver {
     return this.workerService.availableAndUnAvailable(id);
   }
 
-
   @UseGuards(MyGuard)
   @Mutation((returns) => [ImageType])
   getPosts(@Args('id') id: string, @Context() context: any) {
     return this.workerService.getPosts(id);
+  }
+
+  @UseGuards(MyGuard)
+  @Mutation((returns) => DeleteImageType)
+  deletePost(@Args('postId') postId: string, @Context() context: any) {
+    return this.workerService.deletePost(postId);
   }
 
   @UseGuards(MyGuard)

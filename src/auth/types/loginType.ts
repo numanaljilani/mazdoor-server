@@ -17,7 +17,7 @@ export class UserType {
     @Field()
     email : string
 
-    @Field()
+    @Field({ nullable: true , defaultValue : "-"})
     address : string
 
     @Field()
@@ -32,22 +32,22 @@ export class UserType {
     @Field()
     isAdminVerfied : boolean
 
-    @Field( { nullable: true })
+    @Field( { nullable: true , defaultValue : false})
     isWorker : boolean
 
-    @Field( { nullable: true })
+    @Field( { nullable: true , defaultValue : "any work" })
     occupation : string
 
     @Field( { nullable: true , defaultValue : 0})
     cost : number;
   
-    @Field( { nullable: true })
+    @Field( { nullable: true , defaultValue : "-"})
     unit : string;
   
     @Field(() => [String], { nullable: true })
     tags : string[];
   
-    @Field( { nullable: true })
+    @Field( { nullable: true , defaultValue : '-' })
     location : string;
   
     @Field({defaultValue : false })

@@ -1,5 +1,5 @@
 // config/aws.config.ts
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {  DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -35,5 +35,15 @@ export class AwsConfigService {
         ContentType: ext=== '.png' ? 'image/png': 'image/jpeg'
       }),
     );
+  }
+  async deletePost(filename: string, ) {
+
+    const command = new DeleteObjectCommand({
+      Bucket: 'mazdoor',
+      Key: filename,
+    });
+
+   return await this.s3Client.send(command);
+   
   }
 }

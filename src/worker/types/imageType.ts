@@ -11,3 +11,10 @@ export class ImageType {
   @Field()
   imageUrl: string;
 }
+@ObjectType()
+export class DeleteImageType {
+@Field({nullable : true , defaultValue : "Trying to delete"})
+message : string;
+@Field({nullable : true , defaultValue : false})
+success : boolean;
+}

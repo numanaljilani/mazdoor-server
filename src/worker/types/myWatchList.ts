@@ -14,9 +14,9 @@ export class myWatchListType {
   @Field()
   name: string;
 
-  @Field()
+  @Field({ nullable : true ,defaultValue : 'user.png'})
   imageUrl : string
 
-  @Field()
+  @Field({ nullable : true ,defaultValue : 'Any where'})
   location : string;
 }

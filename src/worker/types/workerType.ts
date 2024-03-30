@@ -18,38 +18,41 @@ export class WorkerType {
     @Field()
     email : string
 
-    @Field()
+    @Field({ nullable : true ,defaultValue : 'any where'})
     address : string
 
-    @Field() // Define occupation field as an array of strings
+    @Field({ nullable : true ,defaultValue : 'any service'}) // Define occupation field as an array of strings
     occupation: string;
 
-    @Field({nullable : true})
+    @Field({nullable : true , defaultValue : 0})
     cost : number;
   
-    @Field({nullable : true})
+    @Field({nullable : true , defaultValue : '-'})
     unit : string;
   
     // @Field()
     // tags : string[];
   
-    @Field()
+    @Field({ nullable : true ,defaultValue : 'any where'})
     location : string;
   
-    @Field()
+    @Field({ nullable : true ,defaultValue : false})
     admin : boolean;
   
-    @Field()
+    @Field({ nullable : true ,defaultValue : 'all deays'})
     availablity : string;
   
     @Field()
     votes : number;
 
-    @Field()
+    @Field({ nullable : true ,defaultValue : false})
     available : boolean;
   
     @Field()
     adminVerified : boolean;
+
+    @Field({nullable : true , defaultValue : false })
+    added : boolean 
 
 
 }

@@ -19,7 +19,6 @@ export class WorkerService {
   ) {}
 
   async topRatedWorkerService(take: number, skip: number) {
-
     return this.userReposetry.find({
       where: { adminVerified: true },
       take,
@@ -28,11 +27,9 @@ export class WorkerService {
   }
 
   async getWorkerByService(occupation: string, take: number, skip: number) {
-
-
     try {
       const worker = await this.userReposetry.find({
-        where: { occupation ,isWorker : true , adminVerified: true },
+        where: { occupation, isWorker: true, adminVerified: true },
         take,
         skip,
       });
@@ -45,7 +42,6 @@ export class WorkerService {
   }
 
   async searchSerive(queryString: string, take: number, skip: number) {
- 
     const users = await this.userReposetry.find();
 
     const filteredUsers = users.filter((user) =>
@@ -67,19 +63,23 @@ export class WorkerService {
   //  super admin
   async pendingVerify(skip: number, limit: number) {
     return this.userReposetry.find({
-      where: { adminVerified: false , isWorker : true },
+      where: { adminVerified: false, isWorker: true },
       take: limit,
       skip,
     });
   }
 
   async verifyWorker(id) {
-    const verifyWorkerById = await this.userReposetry.update(id , { isAdminVerfied : true })
+    const verifyWorkerById = await this.userReposetry.update(id, {
+      isAdminVerfied: true,
+    });
     return this.userReposetry.findOne(id);
   }
 
   async blockWorker(id) {
-    const verifyWorkerById = await this.userReposetry.update(id , { isAdminVerfied : false })
+    const verifyWorkerById = await this.userReposetry.update(id, {
+      isAdminVerfied: false,
+    });
     return this.userReposetry.findOne(id);
   }
 
@@ -87,11 +87,15 @@ export class WorkerService {
     return this.userReposetry.find({ take: limit, skip });
   }
 
-  async getWorkerById(id) {
+  async getWorkerById(id, userId) {
     try {
       const worker = await this.userReposetry.findOne(id);
- 
-      return worker;
+      console.log('inside get worker by id', worker);
+      const addedInWatchList = await this.watchListRepository.findOne({
+        where: { workerIds: id, userId },
+      });
+      console.log(addedInWatchList, '>>>>>');
+      return { ...worker, added: !addedInWatchList ? false : true };
     } catch (error) {
       console.log(error);
     }
@@ -164,6 +168,17 @@ export class WorkerService {
 
   async getPosts(userId) {
     return this.imageRepository.find({ where: { userId } });
+  }
+
+  async deletePost(postId) {
+    console.log(postId);
+    const postDetails = await this.imageRepository.findOne(postId);
+    console.log(postDetails);
+    const deleteImage = await this.awsConfigService.deletePost(
+      postDetails?.imageUrl,
+    );
+    const deleteDocument = await this.imageRepository.delete(postId);
+    return { message: 'image deletd sucessfull', success: true };
   }
 
   async myWatchList(take, skip, userId) {
