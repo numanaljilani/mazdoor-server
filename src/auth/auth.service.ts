@@ -128,4 +128,13 @@ export class AuthService {
       console.log(error);
     }
   }
+
+
+  async changePassword(changePassword){
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
 }

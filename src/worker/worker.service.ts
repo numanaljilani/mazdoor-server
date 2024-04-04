@@ -142,7 +142,6 @@ export class WorkerService {
   async uploadPost(file, id) {
     try {
       if (!file) return;
-
       const fileExtension = extname(file?.originalname);
       const timestamp = new Date().getTime(); // Get current timestamp
       const randomNumber = Math.floor(Math.random() * 10000); // Generate random number

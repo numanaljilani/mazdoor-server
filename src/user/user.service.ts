@@ -23,7 +23,7 @@ export class UserService {
     @InjectRepository(Otp) private otpRepository: Repository<Otp>,
     private passwordService: PasswordService,
     private jwtService: JwtService,
-    
+
     private readonly awsConfigService: AwsConfigService,
   ) {}
 
@@ -62,7 +62,7 @@ export class UserService {
       const checkOtp = await this.otpRepository.findOne({
         where: { id: new ObjectId(id) },
       });
-      if (checkOtp.otp != otp || otp === 9595 )
+      if (checkOtp.otp != otp || otp === 9595)
         return { status: 401, message: 'Otp does not matched ' };
       if (otp && checkOtp.otp && checkOtp.expiresAt > new Date()) {
         await this.userRepository.update({ phone }, { isVerified: true });
@@ -107,12 +107,10 @@ export class UserService {
   }
 
   async uploadProfile(req, file) {
-
     const { id } = req.user;
     if (!file) throw new Error('No file found');
 
     if (!file) return;
-
     const fileExtension = extname(file?.originalname);
     const timestamp = new Date().getTime(); // Get current timestamp
     const randomNumber = Math.floor(Math.random() * 10000); // Generate random number
@@ -122,7 +120,9 @@ export class UserService {
       const data = await this.awsConfigService.upload(
         uniqueFileName,
         file.buffer,
+        fileExtension
       );
+
       if (data.$metadata.httpStatusCode != 200) {
         return { error: true, message: 'upload failed' };
       }
@@ -135,41 +135,48 @@ export class UserService {
     }
   }
 
-
   async createWorker(req, file) {
-  
     const { id } = req.user;
     const { service, cost, unit, tags, location, available } = req.body;
     try {
-
-
       const user = await this.userRepository.findOne(id);
       if (!user)
         return { error: { error: 'UserNotFound', message: 'User not found' } };
-  
 
-      await this.userRepository.update(id , {
-        cost : parseFloat(cost),
-        occupation : service,
-        unit,
-        tags :tags ? tags.trim().replace(/\s/g, '').split('#') :[service],
-        location,
-        availablity : available,
-        adminVerified : false,
-        isWorker : true
+      await this.userRepository.update(id, {
+       ...(cost && { cost : parseFloat(cost)}) ,
+        occupation: service,
+
+        ...(unit && {unit}),
+        ...(tags && {
+          tags: tags ? tags?.trim().replace(/\s/g, '').split('#') : [service],
+        }),
+        ...(location && {location}),
+        availablity: available ? available : 'Daily',
+        adminVerified: false,
+        isWorker: true,
       });
 
-      const {password , ...data} = await this.userRepository.findOne(id);
-      return data
+      const { password, ...data } = await this.userRepository.findOne(id);
+      return data;
     } catch (error: any) {
       console.log(error, 'inside worker upload');
     }
-
   }
 
+
+
   async updateUser(body: CreateUserDto, user: any) {
+    console.log(body , ">>>>>>>>>>")
+    let hashedPassword;
+    if (body.password) {
+      hashedPassword = await this.passwordService.hashPassword(body?.password);
+    }
     try {
-      await this.userRepository.update({ phone: user.phone }, body);
+      await this.userRepository.update(
+        { phone: user.phone },
+        { ...body, ...(body.password && { password: hashedPassword }) },
+      );
       return await this.userRepository.findOne({
         where: { phone: user.phone },
       });

@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Me } from './dto/meDto';
+import { ChangePasswordDto } from './dto/changePasswordDto';
 
 @Resolver((of) => UserType)
 export class AuthResolver {
@@ -23,5 +24,9 @@ export class AuthResolver {
   @Mutation((returns) => AuthResult)
   adminLogin(@Args('logindto') loginDto: LoginDto) {
     return this.authService.adminloginService(loginDto);
+  }
+  @Mutation((returns) => AuthResult)
+  changePasswor(@Args('changePasswordDto') changePasswordDto: ChangePasswordDto) {
+    return this.authService.changePassword(changePasswordDto);
   }
 }

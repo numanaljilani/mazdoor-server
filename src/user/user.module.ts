@@ -18,9 +18,6 @@ import { Image } from 'src/worker/entity/images.entity';
       secret: 'Jwt_secrete',
       signOptions: { expiresIn: '600h' },
     }),
-    MulterModule.register({
-      dest : "./uploads"
-    }),
     AuthModule
   ],
   providers: [UserService,PasswordService,],

@@ -6,24 +6,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path'; 
-import { v4 as uuidv4 } from 'uuid';
 import { CreateWorkerDto } from './dto/createWorker';
 
-
-
-export const storage = {
-    storage: diskStorage({
-        destination: './uploads/',
-        filename: (req, file, cb) => {
-            const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
-            const extension: string = path.parse(file.originalname).ext;
-            cb(null, `${filename}${extension}`)
-        }
-    })
-
-}
 
 @Controller('user')
 export class UserController {
@@ -61,14 +45,14 @@ export class UserController {
         return this.userService.crateUser(body,user);
     }
 
+
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('file'))
     @Post('profile')
-    async uploadFile(@UploadedFile() file : Express.Multer.File,
-    @Req() req 
-
-    ) {
-      return this.userService.uploadProfile(req, file);
+    async uploadProfile(@UploadedFile() file : Express.Multer.File, @Req() req) {
+ 
+      return this.userService.uploadProfile(req , file);
+  
     }
 
 
@@ -91,6 +75,6 @@ export class UserController {
     @Body() body : CreateWorkerDto
     ) {
         console.log("inside create worker")
-      return this.userService.createWorker(req, {profile: file.filename} );
+      return this.userService.createWorker(req, {profile: file?.filename} );
     }
 }

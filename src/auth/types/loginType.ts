@@ -14,7 +14,7 @@ export class UserType {
     @Field()
     password : string
 
-    @Field()
+    @Field({defaultValue : "-"})
     email : string
 
     @Field({ nullable: true , defaultValue : "-"})

@@ -10,7 +10,7 @@ export class UpdateUserDto{
     name : string 
    
     @MinLength(4)
-    @Field()
+    @Field({nullable : true})
     password : string
 
     @MinLength(7)
@@ -19,7 +19,7 @@ export class UpdateUserDto{
     email : string
 
     @MinLength(8)
-    @Field()
+    @Field({nullable : true})
     address : string
 
 }
